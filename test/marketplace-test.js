@@ -80,7 +80,7 @@ const toTypedOrder = async (
   salt
 ) => {
   const domain = {
-    chainId: 4,
+    chainId: 31337,
     name: "LN Marketplace",
     verifyingContract: marketplace.address,
     version: "1",
@@ -117,6 +117,18 @@ const toTypedOrder = async (
   };
 
   return { domain, types, value };
+};
+/*
+ * Returns hashed typed data, generated with raw data
+ */
+const getHashedTypedData = async (...args) => {
+  const order = await toTypedOrder(...args);
+
+  return ethers.utils._TypedDataEncoder.hash(
+    order.domain,
+    order.types,
+    order.value
+  );
 };
 
 describe("Initiation", () => {
@@ -444,7 +456,6 @@ describe("Buy Now", () => {
       Math.round(Math.random() * 1000),
     ];
     const sellerSig = await getSignature(addr2, ...sellerOrder);
-    console.log("sellers signature", sellerSig);
 
     const buyerOrder = [
       addr4.address,
@@ -467,7 +478,6 @@ describe("Buy Now", () => {
       sellerSig, //buyer signature is unnecessary when buy out
       { value: parseEther("1.5") }
     );
-
     const sellerBalanceAfterSale = Number(
       formatEther(await provider.getBalance(addr2.address))
     );
@@ -497,6 +507,295 @@ describe("Buy Now", () => {
       royaltyReceiverBalanceAfterSale - royaltyReceiverBalanceBeforeSale
     ).to.be.closeTo(0.099, 0.01);
 
+    expect(
+      marketplaceBalanceAfterSale - marketplaceBalanceBeforeSale
+    ).to.be.closeTo(0.025, 0.001);
+  });
+  it("Should not be able to buy ERC721 that was already sold", async function () {
+    await NFT721.connect(addr2).setApprovalForAll(marketplace.address, true);
+
+    const TIME = Math.round(new Date() / 1000 + 3600);
+    const sellerOrder = [
+      addr2.address,
+      NFT721.address,
+      1,
+      1,
+      0,
+      "0x0000000000000000000000000000000000000000", //ETH
+      parseEther("1.0"),
+      TIME,
+      [],
+      [],
+      Math.round(Math.random() * 1000),
+    ];
+    const sellerSig = await getSignature(addr2, ...sellerOrder);
+
+    const buyerOrder = [
+      addr5.address,
+      NFT721.address,
+      1,
+      1,
+      0,
+      "0x0000000000000000000000000000000000000000", //ETH
+      parseEther("1.0"),
+      TIME,
+      [],
+      [],
+      Math.round(Math.random() * 1000),
+    ];
+
+    await expect(
+      marketplace.connect(addr5).completeOrder(
+        sellerOrder,
+        sellerSig,
+        buyerOrder,
+        sellerSig, //buyer signature is unnecessary when buy out
+        { value: parseEther("1.5") }
+      )
+    ).to.be.reverted;
+  });
+
+  it("Should be able to resell ERC721", async function () {
+    await NFT721.connect(addr4).setApprovalForAll(marketplace.address, true);
+
+    const sellerBalanceBeforeSale = Number(
+      formatEther(await provider.getBalance(addr4.address))
+    );
+    const buyerBalanceBeforeSale = Number(
+      formatEther(await provider.getBalance(addr5.address))
+    );
+    const royaltyReceiverBalanceBeforeSale = Number(
+      formatEther(await provider.getBalance(addr1.address))
+    );
+    const marketplaceBalanceBeforeSale = Number(
+      formatEther(await provider.getBalance(marketplace.address))
+    );
+
+    const TIME = Math.round(new Date() / 1000 + 3600);
+    const sellerOrder = [
+      addr4.address,
+      NFT721.address,
+      1,
+      1,
+      0,
+      "0x0000000000000000000000000000000000000000", //ETH
+      parseEther("1.0"),
+      TIME,
+      [],
+      [],
+      Math.round(Math.random() * 1000),
+    ];
+    const sellerSig = await getSignature(addr4, ...sellerOrder);
+
+    const buyerOrder = [
+      addr5.address,
+      NFT721.address,
+      1,
+      1,
+      0,
+      "0x0000000000000000000000000000000000000000", //ETH
+      parseEther("1.0"),
+      TIME,
+      [],
+      [],
+      Math.round(Math.random() * 1000),
+    ];
+
+    await marketplace.connect(addr5).completeOrder(
+      sellerOrder,
+      sellerSig,
+      buyerOrder,
+      sellerSig, //buyer signature is unnecessary when buy out
+      { value: parseEther("1.0") }
+    );
+
+    const sellerBalanceAfterSale = Number(
+      formatEther(await provider.getBalance(addr4.address))
+    );
+    const buyerBalanceAfterSale = Number(
+      formatEther(await provider.getBalance(addr5.address))
+    );
+    const royaltyReceiverBalanceAfterSale = Number(
+      formatEther(await provider.getBalance(addr1.address))
+    );
+    const marketplaceBalanceAfterSale = Number(
+      formatEther(await provider.getBalance(marketplace.address))
+    );
+
+    expect(await NFT721.ownerOf(1)).to.equal(addr5.address);
+
+    expect(sellerBalanceAfterSale - sellerBalanceBeforeSale).to.be.closeTo(
+      0.875,
+      0.01
+    );
+    expect(buyerBalanceBeforeSale - buyerBalanceAfterSale).to.be.closeTo(
+      1,
+      0.01
+    );
+    expect(
+      royaltyReceiverBalanceAfterSale - royaltyReceiverBalanceBeforeSale
+    ).to.be.closeTo(0.099, 0.01);
+    expect(
+      marketplaceBalanceAfterSale - marketplaceBalanceBeforeSale
+    ).to.be.closeTo(0.025, 0.001);
+  });
+
+  it("Should be able lazy mint ERC721", async function () {
+    await NFT721.connect(addr1).setApprovalForAll(marketplace.address, true);
+
+    const sellerBalanceBeforeSale = Number(
+      formatEther(await provider.getBalance(addr1.address))
+    );
+    const buyerBalanceBeforeSale = Number(
+      formatEther(await provider.getBalance(addr4.address))
+    );
+    const marketplaceBalanceBeforeSale = Number(
+      formatEther(await provider.getBalance(marketplace.address))
+    );
+
+    const TIME = Math.round(new Date() / 1000 + 3600);
+    const sellerOrder = [
+      addr1.address,
+      NFT721.address,
+      6,
+      1,
+      0,
+      "0x0000000000000000000000000000000000000000", //ETH
+      parseEther("1.0"),
+      TIME,
+      [],
+      [],
+      Math.round(Math.random() * 1000),
+    ];
+    const sellerSig = await getSignature(addr1, ...sellerOrder);
+
+    const buyerOrder = [
+      addr4.address,
+      NFT721.address,
+      6,
+      1,
+      0,
+      "0x0000000000000000000000000000000000000000", //ETH
+      parseEther("1.0"),
+      TIME,
+      [],
+      [],
+      Math.round(Math.random() * 1000),
+    ];
+
+    await marketplace.connect(addr4).completeOrder(
+      sellerOrder,
+      sellerSig,
+      buyerOrder,
+      sellerSig, //buyer signature is unnecessary when buy out
+      { value: parseEther("1.0") }
+    );
+
+    const sellerBalanceAfterSale = Number(
+      formatEther(await provider.getBalance(addr1.address))
+    );
+    const buyerBalanceAfterSale = Number(
+      formatEther(await provider.getBalance(addr4.address))
+    );
+    const marketplaceBalanceAfterSale = Number(
+      formatEther(await provider.getBalance(marketplace.address))
+    );
+
+    expect(await NFT721.ownerOf(1)).to.equal(addr5.address);
+
+    expect(sellerBalanceAfterSale - sellerBalanceBeforeSale).to.be.closeTo(
+      0.975,
+      0.01
+    );
+    expect(buyerBalanceBeforeSale - buyerBalanceAfterSale).to.be.closeTo(
+      1,
+      0.01
+    );
+    expect(
+      marketplaceBalanceAfterSale - marketplaceBalanceBeforeSale
+    ).to.be.closeTo(0.025, 0.001);
+  });
+
+  it("Should be able to buy ERC1155", async function () {
+    await NFT1155.connect(addr2).setApprovalForAll(marketplace.address, true);
+
+    const sellerBalanceBeforeSale = Number(
+      formatEther(await provider.getBalance(addr2.address))
+    );
+    const buyerBalanceBeforeSale = Number(
+      formatEther(await provider.getBalance(addr4.address))
+    );
+    const royaltyReceiverBalanceBeforeSale = Number(
+      formatEther(await provider.getBalance(addr3.address))
+    );
+    const marketplaceBalanceBeforeSale = Number(
+      formatEther(await provider.getBalance(marketplace.address))
+    );
+
+    const TIME = Math.round(new Date() / 1000 + 3600);
+    const sellerOrder = [
+      addr2.address,
+      NFT1155.address,
+      1,
+      20,
+      0,
+      "0x0000000000000000000000000000000000000000", //ETH
+      parseEther("0.1"),
+      TIME,
+      [],
+      [],
+      Math.round(Math.random() * 1000),
+    ];
+    const sellerSig = await getSignature(addr2, ...sellerOrder);
+
+    const buyerOrder = [
+      addr4.address,
+      NFT1155.address,
+      1,
+      10,
+      0,
+      "0x0000000000000000000000000000000000000000", //ETH
+      parseEther("1.0"),
+      TIME,
+      [],
+      [],
+      Math.round(Math.random() * 1000),
+    ];
+
+    await marketplace.connect(addr4).completeOrder(
+      sellerOrder,
+      sellerSig,
+      buyerOrder,
+      sellerSig, //buyer signature is unnecessary when buy out
+      { value: parseEther("1.5") }
+    );
+
+    const sellerBalanceAfterSale = Number(
+      formatEther(await provider.getBalance(addr2.address))
+    );
+    const buyerBalanceAfterSale = Number(
+      formatEther(await provider.getBalance(addr4.address))
+    );
+    const royaltyReceiverBalanceAfterSale = Number(
+      formatEther(await provider.getBalance(addr3.address))
+    );
+    const marketplaceBalanceAfterSale = Number(
+      formatEther(await provider.getBalance(marketplace.address))
+    );
+
+    expect(await NFT1155.balanceOf(addr4.address, 1)).to.equal(10);
+
+    expect(sellerBalanceAfterSale - sellerBalanceBeforeSale).to.be.closeTo(
+      0.875,
+      0.01
+    );
+    expect(buyerBalanceBeforeSale - buyerBalanceAfterSale).to.be.closeTo(
+      1,
+      0.01
+    );
+    expect(
+      royaltyReceiverBalanceAfterSale - royaltyReceiverBalanceBeforeSale
+    ).to.be.closeTo(0.099, 0.01);
     expect(
       marketplaceBalanceAfterSale - marketplaceBalanceBeforeSale
     ).to.be.closeTo(0.025, 0.001);

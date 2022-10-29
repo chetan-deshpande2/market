@@ -13,7 +13,15 @@ async function main() {
 
   const market = await upgrades.deployProxy(
     Market,
-    ["LNMarket", "V1", 5, 5, "0x35B22c72cA15ca5dC83A58A10Df0605C88aEC61a", 20],
+    [
+      "LNMarketplace",
+      "V1",
+      5,
+      5,
+      "0x35B22c72cA15ca5dC83A58A10Df0605C88aEC61a",
+      20,
+    ],
+    { kind: "uups" },
     { initializer: "initialize", unsafeAllow: ["delegatecall"] }
   );
 

@@ -9,13 +9,13 @@ async function main() {
 
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
-  const CreatorV1 = await ethers.getContractFactory("CreatorV1");
+  CreatorV1 = await ethers.getContractFactory("CreatorV1");
 
-  const creatorV1 = await upgrades.deployProxy(CreatorV1);
+  nftCreator = await upgrades.deployProxy(CreatorV1, { kind: "uups" });
 
-  await creatorV1.deployed();
+  await nftCreator.deployed();
 
-  console.log("Marketplace deployed to address:", creatorV1.address);
+  console.log("Marketplace deployed to address:", nftCreator.address);
 }
 
 main()

@@ -1,13 +1,14 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-
 import "./interface/DeployersInterfaces.sol";
 import "./SimpleERC721.sol";
 
+import "hardhat/console.sol";
+
 contract SimpleERC721Deployer is AccessControl, ISimpleERC721Deployer {
     address public creator;
-    bytes32 internal constant OWNER_ROLE = keccak256("OWNER_ROLE");
+    bytes32 public constant OWNER_ROLE = keccak256("OWNER_ROLE");
     bytes32 internal constant CREATOR_ROLE = keccak256("CREATOR_ROLE");
 
     /*
@@ -30,19 +31,20 @@ contract SimpleERC721Deployer is AccessControl, ISimpleERC721Deployer {
      *
      * Function deploys token contract and assigns owner
      */
+
     function deployToken(
         address owner_,
-        address decryptMarketplaceAddress_,
+        address lnMarketplaceAddress_,
         string memory name_,
         string memory symbol_,
         string memory uri_,
         uint256 royalty_
-    ) external override onlyRole(CREATOR_ROLE) returns (address) {
+    ) external override returns (address) {
         return
             address(
                 new SimpleERC721(
                     owner_,
-                    decryptMarketplaceAddress_,
+                    lnMarketplaceAddress_,
                     name_,
                     symbol_,
                     uri_,
@@ -58,7 +60,8 @@ contract SimpleERC721Deployer is AccessControl, ISimpleERC721Deployer {
      *
      * Function sets role for proxy-NFT-creator that allows to deploy contracts
      */
-    function setCreator(address _creator) external onlyRole(OWNER_ROLE) {
+    function setCreator(address _creator) external {
+        require(msg.sender == creator, "Only Creator can set other creator");
         require(_creator != address(0), "Cant accept 0 address");
         creator = _creator;
         grantRole(CREATOR_ROLE, _creator);

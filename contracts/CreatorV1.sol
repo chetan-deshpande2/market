@@ -24,7 +24,7 @@ contract CreatorV1 is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         address tokenAddress
     );
 
-    address public decryptMarketplaceAddress;
+    address public lnMarketplaceAddress;
     mapping(address => bool) public deployedTokenContract;
 
     ISimpleERC721Deployer simpleERC721Deployer;
@@ -54,7 +54,7 @@ contract CreatorV1 is Initializable, OwnableUpgradeable, UUPSUpgradeable {
     ) external returns (address) {
         address tokenAddress = simpleERC721Deployer.deployToken(
             msg.sender,
-            decryptMarketplaceAddress,
+            lnMarketplaceAddress,
             name_,
             symbol_,
             uri_,
@@ -95,7 +95,7 @@ contract CreatorV1 is Initializable, OwnableUpgradeable, UUPSUpgradeable {
     ) external returns (address) {
         address tokenAddress = extendedERC721Deployer.deployToken(
             msg.sender,
-            decryptMarketplaceAddress,
+            lnMarketplaceAddress,
             name_,
             symbol_,
             uri_,
@@ -129,7 +129,7 @@ contract CreatorV1 is Initializable, OwnableUpgradeable, UUPSUpgradeable {
     {
         address tokenAddress = simpleERC1155Deployer.deployToken(
             msg.sender,
-            decryptMarketplaceAddress,
+            lnMarketplaceAddress,
             uri_,
             royalty_
         );
@@ -157,7 +157,7 @@ contract CreatorV1 is Initializable, OwnableUpgradeable, UUPSUpgradeable {
     ) external returns (address) {
         address tokenAddress = extendedERC1155Deployer.deployToken(
             msg.sender,
-            decryptMarketplaceAddress,
+            lnMarketplaceAddress,
             uri_,
             royalty_,
             preSalePaymentToken_
@@ -179,13 +179,13 @@ contract CreatorV1 is Initializable, OwnableUpgradeable, UUPSUpgradeable {
      * Sets marketplace address and list of deployer contracts to work with
      */
     function setMarketplaceAndDeployers(
-        address decryptMarketplaceAddress_,
+        address lnMarketplaceAddress_,
         ISimpleERC721Deployer _simpleERC721Deployer,
         IExtendedERC721Deployer _extendedERC721Deployer,
         ISimpleERC1155Deployer _simpleERC1155Deployer,
         IExtendedERC1155Deployer _extendedERC1155Deployer
     ) external onlyOwner {
-        decryptMarketplaceAddress = decryptMarketplaceAddress_;
+        lnMarketplaceAddress = lnMarketplaceAddress_;
         simpleERC721Deployer = _simpleERC721Deployer;
         extendedERC721Deployer = _extendedERC721Deployer;
         simpleERC1155Deployer = _simpleERC1155Deployer;

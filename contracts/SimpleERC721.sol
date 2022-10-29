@@ -6,7 +6,7 @@ contract SimpleERC721 is CustomERC721 {
     /*
      * Params
      * address owner_ - Address that will become contract owner
-     * address decryptMarketplaceAddress_ - Decrypt Marketplace proxy address
+     * address lnMarketplaceAddress_ - Decrypt Marketplace proxy address
      * string memory name_ - Token name
      * string memory symbol_ - Token Symbol
      * string memory uri_ - Base token URI
@@ -14,7 +14,7 @@ contract SimpleERC721 is CustomERC721 {
      */
     constructor(
         address owner_,
-        address decryptMarketplaceAddress_,
+        address lnMarketplaceAddress_,
         string memory name_,
         string memory symbol_,
         string memory uri_,
@@ -22,7 +22,7 @@ contract SimpleERC721 is CustomERC721 {
     )
         CustomERC721(
             owner_,
-            decryptMarketplaceAddress_,
+            lnMarketplaceAddress_,
             name_,
             symbol_,
             uri_,

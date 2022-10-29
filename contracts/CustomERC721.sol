@@ -15,19 +15,19 @@ abstract contract CustomERC721 is RoyaltyDistribution, ERC721 {
 
     string private _uri;
 
-    address public decryptMarketplaceAddress;
+    address public lnMarketplaceAddress;
 
     bool private isForbiddenToTradeOnOtherMarketplaces = false;
 
     modifier onlyDecrypt() {
-        require(msg.sender == decryptMarketplaceAddress, "Unauthorized");
+        require(msg.sender == lnMarketplaceAddress, "Unauthorized");
         _;
     }
 
     /*
      * Params
      * address owner_ - Address that will become contract owner
-     * address decryptMarketplaceAddress_ - Decrypt Marketplace proxy address
+     * address lnMarketplaceAddress_ - Decrypt Marketplace proxy address
      * string memory name_ - Token name
      * string memory symbol_ - Token Symbol
      * string memory uri_ - Base token URI
@@ -35,7 +35,7 @@ abstract contract CustomERC721 is RoyaltyDistribution, ERC721 {
      */
     constructor(
         address owner_,
-        address decryptMarketplaceAddress_,
+        address lnMarketplaceAddress_,
         string memory name_,
         string memory symbol_,
         string memory uri_,
@@ -45,7 +45,7 @@ abstract contract CustomERC721 is RoyaltyDistribution, ERC721 {
         globalRoyalty = royalty_;
         transferOwnership(owner_);
         royaltyReceiver = owner_;
-        decryptMarketplaceAddress = decryptMarketplaceAddress_;
+        lnMarketplaceAddress = lnMarketplaceAddress_;
     }
 
     /*
@@ -160,7 +160,7 @@ abstract contract CustomERC721 is RoyaltyDistribution, ERC721 {
     ) internal virtual override {
         bool allowed = !isForbiddenToTradeOnOtherMarketplaces ||
             msg.sender == tx.origin ||
-            msg.sender == decryptMarketplaceAddress;
+            msg.sender == lnMarketplaceAddress;
         require(allowed, "Restricted to Decrypt marketplace only!");
     }
 

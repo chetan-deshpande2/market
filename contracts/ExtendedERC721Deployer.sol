@@ -23,7 +23,7 @@ contract ExtendedERC721Deployer is AccessControl, IExtendedERC721Deployer {
     /*
      * Params
      * address owner_ - Address that will become contract owner
-     * address decryptMarketplaceAddress_ - Decrypt Marketplace proxy address
+     * address lnMarketplaceAddress_ - Decrypt Marketplace proxy address
      * string memory name_ - Token name
      * string memory symbol_ - Token Symbol
      * string memory uri_ - Base token URI
@@ -35,18 +35,18 @@ contract ExtendedERC721Deployer is AccessControl, IExtendedERC721Deployer {
      */
     function deployToken(
         address owner_,
-        address decryptMarketplaceAddress_,
+        address lnMarketplaceAddress_,
         string memory name_,
         string memory symbol_,
         string memory uri_,
         uint256 royalty_,
         address preSalePaymentToken_
-    ) external override onlyRole(CREATOR_ROLE) returns (address) {
+    ) external override returns (address) {
         return
             address(
                 new ExtendedERC721(
                     owner_,
-                    decryptMarketplaceAddress_,
+                    lnMarketplaceAddress_,
                     name_,
                     symbol_,
                     uri_,
@@ -63,7 +63,8 @@ contract ExtendedERC721Deployer is AccessControl, IExtendedERC721Deployer {
      *
      * Function sets role for proxy-NFT-creator that allows to deploy contracts
      */
-    function setCreator(address _creator) external onlyRole(OWNER_ROLE) {
+    function setCreator(address _creator) external {
+        require(msg.sender == creator, "Only Creator can set other creator");
         require(_creator != address(0), "Cant accept 0 address");
         creator = _creator;
         grantRole(CREATOR_ROLE, _creator);

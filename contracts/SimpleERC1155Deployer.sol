@@ -32,18 +32,13 @@ contract SimpleERC1155Deployer is AccessControl, ISimpleERC1155Deployer {
      */
     function deployToken(
         address owner_,
-        address decryptMarketplaceAddress_,
+        address lnMarketplaceAddress_,
         string memory uri_,
         uint256 royalty_
-    ) external override onlyRole(CREATOR_ROLE) returns (address) {
+    ) external override returns (address) {
         return
             address(
-                new SimpleERC1155(
-                    owner_,
-                    decryptMarketplaceAddress_,
-                    uri_,
-                    royalty_
-                )
+                new SimpleERC1155(owner_, lnMarketplaceAddress_, uri_, royalty_)
             );
     }
 
@@ -54,7 +49,8 @@ contract SimpleERC1155Deployer is AccessControl, ISimpleERC1155Deployer {
      *
      * Function sets role for proxy-NFT-creator that allows to deploy contracts
      */
-    function setCreator(address _creator) external onlyRole(OWNER_ROLE) {
+    function setCreator(address _creator) external {
+        require(msg.sender == creator, "Only Creator can set other creator");
         require(_creator != address(0), "Cant accept 0 address");
         creator = _creator;
         grantRole(CREATOR_ROLE, _creator);

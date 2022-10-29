@@ -9,32 +9,32 @@ import "./interface/IRoyaltyDistribution.sol";
 contract CustomERC1155 is RoyaltyDistribution, ERC1155 {
     event UpdatedURI(string _uri);
 
-    address public decryptMarketplaceAddress;
+    address public lnMarketplaceAddress;
 
     bool private isForbiddenToTradeOnOtherMarketplaces = false;
 
     modifier onlyDecrypt() {
-        require(msg.sender == decryptMarketplaceAddress, "Unauthorized");
+        require(msg.sender == lnMarketplaceAddress, "Unauthorized");
         _;
     }
 
     /*
      * Params
      * address owner_ - Address that will become contract owner
-     * address decryptMarketplaceAddress_ - Decrypt Marketplace proxy address
+     * address lnMarketplaceAddress_ - Decrypt Marketplace proxy address
      * string memory uri_ - Base token URI
      * uint256 royalty_ - Base royalty in basis points (1000 = 10%)
      */
     constructor(
         address owner_,
-        address decryptMarketplaceAddress_,
+        address lnMarketplaceAddress_,
         string memory uri_,
         uint256 royalty_
     ) ERC1155(uri_) {
         globalRoyalty = royalty_;
         transferOwnership(owner_);
         royaltyReceiver = owner_;
-        decryptMarketplaceAddress = decryptMarketplaceAddress_;
+        lnMarketplaceAddress = lnMarketplaceAddress_;
     }
 
     /*
@@ -140,7 +140,7 @@ contract CustomERC1155 is RoyaltyDistribution, ERC1155 {
     ) internal virtual override {
         bool allowed = !isForbiddenToTradeOnOtherMarketplaces ||
             msg.sender == tx.origin ||
-            msg.sender == decryptMarketplaceAddress;
+            msg.sender == lnMarketplaceAddress;
         require(allowed, "Restricted to Decrypt marketplace only!");
     }
 

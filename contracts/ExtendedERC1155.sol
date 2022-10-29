@@ -11,7 +11,7 @@ contract ExtendedERC1155 is PreSale1155, CustomERC1155 {
     /*
      * Params
      * address owner_ - Address that will become contract owner
-     * address decryptMarketplaceAddress_ - Decrypt Marketplace proxy address
+     * address lnMarketplaceAddress_ - Decrypt Marketplace proxy address
      * string memory uri_ - Base token URI
      * uint256 royalty_ - Base royaly in basis points (1000 = 10%)
      * address preSalePaymentToken_ - ERC20 token address, that will be used for pre sale payment
@@ -19,11 +19,11 @@ contract ExtendedERC1155 is PreSale1155, CustomERC1155 {
      */
     constructor(
         address owner_,
-        address decryptMarketplaceAddress_,
+        address lnMarketplaceAddress_,
         string memory uri_,
         uint256 royalty_,
         address preSalePaymentToken_
-    ) CustomERC1155(owner_, decryptMarketplaceAddress_, uri_, royalty_) {
+    ) CustomERC1155(owner_, lnMarketplaceAddress_, uri_, royalty_) {
         preSalePaymentToken = preSalePaymentToken_;
     }
 

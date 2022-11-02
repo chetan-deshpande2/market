@@ -22,6 +22,9 @@ async function main() {
   );
   const simpleERC1155Deployer = await SimpleERC1155Deployer.deploy(creator);
 
+  const TestERC20 = await hre.ethers.getContractFactory("TestERC20");
+  const testERC20 = await TestERC20.deploy(10000000000);
+
   console.log(
     `SimpleERC721Deployer Address deployed to ${simpleERC721Deployer.address}`
   );
@@ -34,6 +37,7 @@ async function main() {
   console.log(
     `ExtendedERC1155Deployer Address deployed to  ${simpleERC1155Deployer.address}`
   );
+  console.log(`TestERC20 Address deployed to  ${testERC20.address}`);
 }
 
 main().catch((error) => {

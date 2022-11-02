@@ -122,15 +122,15 @@ const toTypedOrder = async (
 /*
  * Returns hashed typed data, generated with raw data
  */
-const getHashedTypedData = async (...args) => {
-  const order = await toTypedOrder(...args);
+// const getHashedTypedData = async (...args) => {
+//   const order = await toTypedOrder(...args);
 
-  return ethers.utils._TypedDataEncoder.hash(
-    order.domain,
-    order.types,
-    order.value
-  );
-};
+//   return ethers.utils._TypedDataEncoder.hash(
+//     order.domain,
+//     order.types,
+//     order.value
+//   );
+// };
 
 describe("Initiation", () => {
   it("Snapshot EVM", async () => {

@@ -60,6 +60,16 @@
       "address": "0x5f6dDb96158Bc014c3140a27D0AC878Ccdd975fD",
       "txHash": "0x0ed191d3679f7ea0c2a1e8ad412a0256765b357fdb9ff66cb7b4b0231e219e85",
       "kind": "uups"
+    },
+    {
+      "address": "0x4119FB42ee94a282972A9957d46E1aBefAdAFF8d",
+      "txHash": "0x813bb7f7f041fb9219fea76042ba4d5aebfe724fc46fb79d789762439c2dcc33",
+      "kind": "uups"
+    },
+    {
+      "address": "0x00e8938EFb57A1A135c4f6fDBCee6CF9E64777c8",
+      "txHash": "0xfb52a8f7ccf51d6e4e8826a3bad743f71b8d1cc2aec6d247bee6bfbb3a841c8d",
+      "kind": "uups"
     }
   ],
   "impls": {
@@ -746,6 +756,166 @@
           },
           "t_mapping(t_bytes32,t_uint256)": {
             "label": "mapping(bytes32 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "46333f3b3906a37434e3713fb9308b6d501205a765b7cd753c989b9e9248fb72": {
+      "address": "0x258AEFD61004286D4f10707d463e36b5D755e0eB",
+      "txHash": "0x7414691e7e490bd07f42446f7b8dadbe7f6cb3eeab4e5dcd2976d9b888e1973e",
+      "layout": {
+        "solcVersion": "0.8.10",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1967UpgradeUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol:211"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "UUPSUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol:107"
+          },
+          {
+            "label": "lnMarketplaceAddress",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_address",
+            "contract": "CreatorV1",
+            "src": "contracts/CreatorV1.sol:27"
+          },
+          {
+            "label": "deployedTokenContract",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "CreatorV1",
+            "src": "contracts/CreatorV1.sol:28"
+          },
+          {
+            "label": "simpleERC721Deployer",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_contract(ISimpleERC721Deployer)12641",
+            "contract": "CreatorV1",
+            "src": "contracts/CreatorV1.sol:30"
+          },
+          {
+            "label": "extendedERC721Deployer",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_contract(IExtendedERC721Deployer)12661",
+            "contract": "CreatorV1",
+            "src": "contracts/CreatorV1.sol:31"
+          },
+          {
+            "label": "simpleERC1155Deployer",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_contract(ISimpleERC1155Deployer)12675",
+            "contract": "CreatorV1",
+            "src": "contracts/CreatorV1.sol:32"
+          },
+          {
+            "label": "extendedERC1155Deployer",
+            "offset": 0,
+            "slot": "206",
+            "type": "t_contract(IExtendedERC1155Deployer)12691",
+            "contract": "CreatorV1",
+            "src": "contracts/CreatorV1.sol:33"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IExtendedERC1155Deployer)12691": {
+            "label": "contract IExtendedERC1155Deployer",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IExtendedERC721Deployer)12661": {
+            "label": "contract IExtendedERC721Deployer",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ISimpleERC1155Deployer)12675": {
+            "label": "contract ISimpleERC1155Deployer",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ISimpleERC721Deployer)12641": {
+            "label": "contract ISimpleERC721Deployer",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
             "numberOfBytes": "32"
           },
           "t_uint256": {

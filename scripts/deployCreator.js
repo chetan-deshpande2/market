@@ -15,7 +15,7 @@ async function main() {
 
   await nftCreator.deployed();
 
-  console.log("Marketplace deployed to address:", nftCreator.address);
+  console.log("Creator deployed to address:", nftCreator.address);
 }
 
 main()

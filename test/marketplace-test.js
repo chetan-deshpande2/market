@@ -40,8 +40,8 @@ const privateKey = "0x" + process.env.PRIVATE_KEY;
 let signer;
 
 const marketplaceArgs = [
-  "LN Marketplace", //marketplace name
-  "1", //version
+  "LNMarketplace", //marketplace name
+  "V1", //version
   250, //marketplace fee (250 = 2.5%)
   10000, //super Admin fee (6000 = 60%)
   "Admin.address",
@@ -82,9 +82,9 @@ const toTypedOrder = async (
 ) => {
   const domain = {
     chainId: 31337,
-    name: "LN Marketplace",
+    name: "LNMarketplace",
     verifyingContract: marketplace.address,
-    version: "1",
+    version: "V1",
   };
 
   const types = {
